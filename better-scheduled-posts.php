@@ -4,18 +4,20 @@
  * Description: Improves the management of your scheduled Posts by making them visible on the front end to administrators/contributors, adding them to the internal link box and enabling you to push them back by any number of days.
  * Author: Carlo Manf
  * Author URI: http://carlomanf.id.au
- * Version: 1.0.0
+ * Version: 1.0.1
  */
 
 // Show scheduled posts to administrators/contributors
-add_filter( 'pre_get_posts', function( $query ) {
+add_filter( 'pre_get_posts', 'bsp_show_scheduled_posts' );
+function bsp_show_scheduled_posts( $query ) {
 
 	if ( current_user_can( 'edit_posts' ) && !$query->is_singular() && !is_admin() )
 		$query->set( 'post_status', array( 'publish', 'future' ) );
 
 	return $query;
-} );
+}
 
+// Validate data before pushing back post dates
 function bsp_validate_post_data() {
 	$valid = true;
 	$date = explode( '-', $_POST[ 'start_date' ] );
@@ -33,6 +35,7 @@ function bsp_validate_post_data() {
 	return $valid;
 }
 
+// Push back post dates
 function bsp_push_posts() {
 
 	$scheduled_posts = get_posts( array( 'post_status' => 'future', 'posts_per_page' => -1 ) );
@@ -62,6 +65,7 @@ function bsp_push_posts() {
 
 }
 
+// Tools page
 function bsp_tools_page() {
 
 	if ( !empty( $_POST[ 'push' ] ) )
@@ -90,12 +94,15 @@ function bsp_tools_page() {
 
 }
 
-add_action( 'admin_menu', function() {
+// Add menu page
+add_action( 'admin_menu', 'bsp_add_menu_page' );
+function bsp_add_menu_page() {
 	add_submenu_page( 'tools.php', 'Better Scheduled Posts', 'Push Back Posts', 'edit_others_posts', 'bsp', 'bsp_tools_page' );
-} );
+}
 
 // Clean permalinks for scheduled posts
-add_filter( 'post_link', function( $permalink, $post, $leavename ) {
+add_filter( 'post_link', 'bsp_clean_permalinks', 10, 3 );
+function bsp_clean_permalinks( $permalink, $post, $leavename ) {
 
 	if ( 'future' === $post->post_status ) {
 		$temp_post = clone $post;
@@ -104,7 +111,7 @@ add_filter( 'post_link', function( $permalink, $post, $leavename ) {
 	}
 
 	return $permalink;
-}, 10, 3 );
+}
 
 // Add scheduled posts to link box
 add_action( 'pre_get_posts', 'bsp_link_box' );

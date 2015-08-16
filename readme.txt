@@ -38,3 +38,6 @@ Install this plugin and you'll be able to push back all your scheduled Posts by 
 
 = 1.0.0 =
 * Initial release
+
+= 1.0.1 =
+* Add compatibility for older PHP versions
