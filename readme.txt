@@ -1,12 +1,12 @@
 === Better Scheduled Posts ===
 Contributors: carlomanf
 Tags: schedule
-Tested up to: 4.2
+Tested up to: 4.3
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Improves the management of your scheduled Posts.
+The must have plugin for any WordPress user who schedules posts in advance.
 
 == Description ==
 
@@ -28,11 +28,15 @@ Does it frustrate you when you're writing a Post and you want to link to another
 
 Install this plugin and you'll be able to easily add links to scheduled Posts the same way that you add links to published Posts.
 
-= Push Back Posts =
+= Reschedule Posts =
 
 Have you ever scheduled a number of posts to publish, perhaps on successive days, and your plans change and you need to push them all back a day (or number of days)?
 
 Install this plugin and you'll be able to push back all your scheduled Posts by any number of days, all at once instead of one by one.
+
+== Screenshots ==
+
+1. Better Scheduled Posts tools page
 
 == Changelog ==
 
@@ -41,3 +45,9 @@ Install this plugin and you'll be able to push back all your scheduled Posts by 
 
 = 1.0.1 =
 * Add compatibility for older PHP versions
+
+= 1.0.2 =
+* Fix bug that was preventing galleries from displaying
+
+= 1.0.3 =
+* Fix bug that prevented published posts displaying to administrators/contributors

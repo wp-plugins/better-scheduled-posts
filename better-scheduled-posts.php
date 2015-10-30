@@ -4,20 +4,32 @@
  * Description: Improves the management of your scheduled Posts by making them visible on the front end to administrators/contributors, adding them to the internal link box and enabling you to push them back by any number of days.
  * Author: Carlo Manf
  * Author URI: http://carlomanf.id.au
- * Version: 1.0.1
+ * Version: 1.0.3
  */
 
 // Show scheduled posts to administrators/contributors
 add_filter( 'pre_get_posts', 'bsp_show_scheduled_posts' );
 function bsp_show_scheduled_posts( $query ) {
 
-	if ( current_user_can( 'edit_posts' ) && !$query->is_singular() && !is_admin() )
-		$query->set( 'post_status', array( 'publish', 'future' ) );
+	if ( current_user_can( 'edit_posts' ) && !$query->is_singular() && !is_admin() ) {
+		$statuses = $query->get( 'post_status' );
+
+		if ( !$statuses )
+			$statuses = 'publish';
+
+		if ( is_string( $statuses ) )
+			$statuses = explode( ',', $statuses );
+
+		if ( !in_array( 'future', $statuses ) ) {
+			$statuses[] = 'future';
+			$query->set( 'post_status', $statuses );
+		}
+	}
 
 	return $query;
 }
 
-// Validate data before pushing back post dates
+// Validate data before rescheduling posts
 function bsp_validate_post_data() {
 	$valid = true;
 	$date = explode( '-', $_POST[ 'start_date' ] );
@@ -35,7 +47,7 @@ function bsp_validate_post_data() {
 	return $valid;
 }
 
-// Push back post dates
+// Reschedule posts
 function bsp_push_posts() {
 
 	$scheduled_posts = get_posts( array( 'post_status' => 'future', 'posts_per_page' => -1 ) );
@@ -88,7 +100,7 @@ function bsp_tools_page() {
 					<td><input type="text" id="no_of_days" name="no_of_days" value=""></td>
 				</tr>
 			</table>
-			<p class="submit"><input type="submit" name="push" class="button button-primary" value="Push Back Posts"></p>
+			<p class="submit"><input type="submit" name="push" class="button button-primary" value="Reschedule Posts"></p>
 		</form>
 	</div><?php
 
@@ -97,7 +109,7 @@ function bsp_tools_page() {
 // Add menu page
 add_action( 'admin_menu', 'bsp_add_menu_page' );
 function bsp_add_menu_page() {
-	add_submenu_page( 'tools.php', 'Better Scheduled Posts', 'Push Back Posts', 'edit_others_posts', 'bsp', 'bsp_tools_page' );
+	add_submenu_page( 'tools.php', 'Better Scheduled Posts', 'Scheduled Posts', 'edit_others_posts', 'bsp', 'bsp_tools_page' );
 }
 
 // Clean permalinks for scheduled posts
